@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git API</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="card">
+      <div id="search">
+        <input type="text" placeholder="Enter github username..." id="user" />
+        <i class="fa-solid fa-magnifying-glass" id="btn"></i>
+      </div>
+      <div id="image">
+        <img src="" />
+      </div>
+      <div id="details">
+        <div class="scard">
+          <h3>Name</h3>
+          <span id="name"></span>
+        </div>
+        <div class="scard">
+          <h3>location</h3>
+          <span id="loc"></span>
+        </div>
+        <div class="scard">
+          <h3>login</h3>
+          <span id="login"></span>
+        </div>
+        <div class="scard">
+          <h3>Public_repos</h3>
+          <span id="repos"></span>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const name = document.getElementById("name");
+    const repos = document.getElementById("repos");
+    const loc = document.getElementById("loc");
+    const login = document.getElementById("login");
+    const image = document.getElementById("image");
+    const user = document.getElementById("user");
+
+    function fetchDetails(username) {
+      const xhr = new XMLHttpRequest();
+      const url = `https://api.github.com/users/${username}`;
+      xhr.open("GET", url);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          const data = JSON.parse(xhr.responseText);
+          console.log(data);
+          if (data.message === "Not Found") {
+            alert("User Not Found");
+            user.value = "";
+          } else {
+            name.innerHTML = `<span>${data.name}</span>`;
+            repos.innerHTML = `<span>${data.public_repos}</span>`;
+            loc.innerHTML = `<span>${data.location}</span>`;
+            login.innerHTML = `<span>${data.login}</span>`;
+            image.innerHTML = `<img src="${data.avatar_url}" alt="${data.login}">`;
+            user.value = "";
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    const btn = document.getElementById("btn");
+    btn.addEventListener("click", function () {
+      const username = user.value;
+      if (!username) {
+        alert("Enter username");
+      } else {
+        fetchDetails(username);
+      }
+    });
+  </script>
+</html>
